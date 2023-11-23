@@ -90,17 +90,59 @@ var upperCasedCharacters = [
 
 // Function to prompt user for password options
 function getPasswordOptions() {
+  var length = parseInt(prompt("Enter the length of the password"));
+  
+  if (isNaN(length) || length < 8 || length > 128) {
+    alert("Password length must be a number between 8 and 128.");
+    return null;
+  }
+
+  var includeSpecial = confirm("Include special characters?");
+  var includeNumeric = confirm("Include numeric characters?");
+  var includeLowercase = confirm("Include lowercase characters?");
+  var includeUppercase = confirm("Include uppercase characters?");
+
+  if (!includeSpecial && !includeNumeric && !includeLowercase && !includeUppercase) {
+    alert("At least one character type must be selected.");
+    return null;
+  }
+
+  return {
+    length: length,
+    includeSpecial: includeSpecial,
+    includeNumeric: includeNumeric,
+    includeLowercase: includeLowercase,
+    includeUppercase: includeUppercase
+  };
 
 }
 
 // Function for getting a random element from an array
 function getRandom(arr) {
-
+  var randomIndex = Math.floor(Math.random() * arr.length);
+  return arr[randomIndex];
 }
 
 // Function to generate password with user input
 function generatePassword() {
+  var options = getPasswordOptions();
 
+  if (!options) {
+    return ""; // User canceled or entered invalid options
+  }
+
+  var characters = [];
+  if (options.includeSpecial) characters = characters.concat(specialCharacters);
+  if (options.includeNumeric) characters = characters.concat(numericCharacters);
+  if (options.includeLowercase) characters = characters.concat(lowerCasedCharacters);
+  if (options.includeUppercase) characters = characters.concat(upperCasedCharacters);
+
+  var password = "";
+  for (var i = 0; i < options.length; i++) {
+    password += getRandom(characters);
+  }
+
+  return password;
 }
 
 // Get references to the #generate element
